@@ -164,14 +164,14 @@ var generateChart = function (apiurl) {
 
 
     var $quote = $("#quote").val();
-    // $("#stock").text($quote.toUpperCase())
     currentPrice = data[data.length-1].close
-    // $("#price").text(currentPrice + " USD")
 
     svg.append('text')
       .attr("x", 5)
       .attr("y", 15)
       .text($quote.toUpperCase() + " - " + currentPrice + " USD");
+
+    $("#quote").val("")
   });
 
   function enter() {
@@ -187,7 +187,6 @@ var generateChart = function (apiurl) {
         timeAnnotation.format()(coords.x) + ", " + ohlcAnnotation.format()(coords.y)
     )
   }
-
 };
 
 
@@ -204,7 +203,8 @@ $(document).ready(function () {
     var $quote = $("#quote").val();
     var formatTime = d3.timeFormat("%Y-%m-%d");
     var startDate = formatTime(generateStartDate());
-    var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote + ".csv?start_date=" + startDate + "&api_key=" + apikey
+    var interval = $("#interval").val().toLowerCase();
+    var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote + ".csv?start_date=" + startDate + "&collapse=" + interval + "&api_key=" + apikey
     generateChart(apiurl);
   });
 
