@@ -178,6 +178,19 @@ path.middle, path.zero {
    fill: #DDDDDD;
 }
 
+
+.y.annotation.left path {
+  fill: #00AA00;
+}
+
+.y.annotation.right path {
+  fill: #FF0000;
+}
+
+.x.annotation path {
+  fill: #DDD80E;
+}
+
 .tradearrow path.tradearrow {
    stroke: none;
 }

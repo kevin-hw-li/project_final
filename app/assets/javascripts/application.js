@@ -17,13 +17,13 @@
 //= require underscore
 //= require_tree .
 
-// var apikey = "LxUsPWgzw_oJMSdTP3MH"
+var apikey = "LxUsPWgzw_oJMSdTP3MH"
 
 var generateChart = function (apiurl) {
 
   $("svg").remove();
 
-  var margin = {top: 20, right: 20, bottom: 30, left: 50},
+  var margin = {top: 20, right: 50, bottom: 30, left: 50},
           width = 960 - margin.left - margin.right,
           height = 500 - margin.top - margin.bottom;
 
@@ -39,17 +39,55 @@ var generateChart = function (apiurl) {
           .xScale(x)
           .yScale(y);
 
-  var xAxis = d3.axisBottom()
-          .scale(x);
+  var xAxis = d3.axisBottom(x);
 
-  var yAxis = d3.axisLeft()
-          .scale(y);
+  var xTopAxis = d3.axisTop(x);
+
+  var yAxis = d3.axisLeft(y);
+
+  var yRightAxis = d3.axisRight(y);
+
+  var ohlcAnnotation = techan.plot.axisannotation()
+          .axis(yAxis)
+          .orient('left')
+          .format(d3.format(',.2f'));
+
+  var ohlcRightAnnotation = techan.plot.axisannotation()
+          .axis(yRightAxis)
+          .orient('right')
+          .translate([width, 0]);
+
+  var timeAnnotation = techan.plot.axisannotation()
+          .axis(xAxis)
+          .orient('bottom')
+          .format(d3.timeFormat('%Y-%m-%d'))
+          .width(65)
+          .translate([0, height]);
+
+  var timeTopAnnotation = techan.plot.axisannotation()
+          .axis(xTopAxis)
+          .orient('top');
+
+  var crosshair = techan.plot.crosshair()
+          .xScale(x)
+          .yScale(y)
+          .xAnnotation([timeAnnotation, timeTopAnnotation])
+          .yAnnotation([ohlcAnnotation, ohlcRightAnnotation])
+          .on("enter", enter)
+          .on("out", out)
+          .on("move", move);
 
   var svg = d3.select("body").append("svg")
           .attr("width", width + margin.left + margin.right)
           .attr("height", height + margin.top + margin.bottom)
           .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var coordsText = svg.append('text')
+          .style("text-anchor", "end")
+          .attr("class", "coords")
+          .attr("x", width - 5)
+          .attr("y", 15);
 
   d3.csv(apiurl, function(error, data) {
 
@@ -67,42 +105,62 @@ var generateChart = function (apiurl) {
           };
       }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
 
-      var $quote = $("#quote").val();
-      $("#stock").text($quote.toUpperCase())
-      currentPrice = data[data.length-1].close
-      $("#price").text(currentPrice + " USD")
+      x.domain(data.map(accessor.d));
+      y.domain(techan.scale.plot.ohlc(data, accessor).domain()); // render the time scale
 
       svg.append("g")
-              .attr("class", "candlestick");
+              .datum(data)
+              .attr("class", "candlestick")
+              .call(candlestick); // append and render the candlesticks
 
       svg.append("g")
               .attr("class", "x axis")
-              .attr("transform", "translate(0," + height + ")");
+              .call(xTopAxis);
+
+      svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0," + height + ")")
+              .call(xAxis);
 
       svg.append("g")
               .attr("class", "y axis")
-              .append("text")
-              .attr("transform", "rotate(-90)")
-              .attr("y", 6)
-              .attr("dy", ".71em")
-              .style("text-anchor", "end")
-              .text("Price ($)");
+              .call(yAxis);
 
-      // Data to display initially
-      // draw(data.slice(0, data.length-20));
+      svg.append("g")
+              .attr("class", "y axis")
+              .attr("transform", "translate(" + width + ",0)")
+              .call(yRightAxis);
 
-      draw(data);
-      // Only want this button to be active if the data has loaded
-      // d3.select("button").on("click", function() { draw(data); }).style("display", "inline");
+      svg.append('g')
+              .attr("class", "crosshair")
+              .datum({ x: x.domain()[80], y: 67.5 })
+              .call(crosshair)
+              .each(function(d) { move(d); }); // Display the current data
+
+
+      var $quote = $("#quote").val();
+      // $("#stock").text($quote.toUpperCase())
+      currentPrice = data[data.length-1].close
+      // $("#price").text(currentPrice + " USD")
+
+      svg.append('text')
+              .attr("x", 5)
+              .attr("y", 15)
+              .text($quote.toUpperCase() + " - " + currentPrice + " USD");
   });
 
-  function draw(data) {
-      x.domain(data.map(candlestick.accessor().d));
-      y.domain(techan.scale.plot.ohlc(data, candlestick.accessor()).domain());
+  function enter() {
+      coordsText.style("display", "inline");
+  }
 
-      svg.selectAll("g.candlestick").datum(data).call(candlestick);
-      svg.selectAll("g.x.axis").call(xAxis);
-      svg.selectAll("g.y.axis").call(yAxis);
+  function out() {
+      coordsText.style("display", "none");
+  }
+
+  function move(coords) {
+      coordsText.text(
+          timeAnnotation.format()(coords.x) + ", " + ohlcAnnotation.format()(coords.y)
+      );
   }
 
 };
@@ -119,8 +177,8 @@ $(document).ready(function () {
   $("#search").on("click", function () {
     var $quote = $("#quote").val();
     var startDate = "2017-01-01";
-    var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote + ".csv?start_date=" + startDate
-    generateChart(apiurl)
+    var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote + ".csv?start_date=" + startDate + "&api_key=" + apikey
+    generateChart(apiurl);
   });
 
 });
