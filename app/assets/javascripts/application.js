@@ -202,33 +202,29 @@ $(document).ready(function () {
   $("#search").on("click", function (e) {
     var apikey = "LxUsPWgzw_oJMSdTP3MH"
     var $quote = $("#quote").val();
-    var $timeframe = $("#timeframe").val();
     var formatTime = d3.timeFormat("%Y-%m-%d");
-    var today = new Date();
-
-    if ($timeframe === "1-month") {
-      oneMonthAgo = today.setMonth(today.getMonth()-1);
-      startDate = formatTime(oneMonthAgo);
-    } else if ($timeframe === "3-months") {
-      threeMonthsAgo = today.setMonth(today.getMonth()-3);
-      startDate = formatTime(threeMonthsAgo);
-    } else if ($timeframe === "6-months") {
-      sixMonthsAgo = today.setMonth(today.getMonth()-6);
-      startDate = formatTime(sixMonthsAgo);
-    } else if ($timeframe === "1-year") {
-      oneYearAgo = today.setFullYear(today.getFullYear()-1);
-      startDate = formatTime(oneYearAgo);
-    } else if ($timeframe === "2-years") {
-      twoYearsAgo = today.setFullYear(today.getFullYear()-2);
-      startDate = formatTime(twoYearsAgo);
-    } else if ($timeframe === "5-years") {
-      fiveYearsAgo = today.setFullYear(today.getFullYear()-5);
-      startDate = formatTime(fiveYearsAgo);
-    }
-
+    var startDate = formatTime(generateStartDate());
     var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote + ".csv?start_date=" + startDate + "&api_key=" + apikey
     generateChart(apiurl);
   });
+
+  var generateStartDate = function () {
+    var $timeframe = $("#timeframe").val();
+    var today = new Date();
+    if ($timeframe === "1-month") {
+      return today.setMonth(today.getMonth()-1);
+    } else if ($timeframe === "3-months") {
+      return today.setMonth(today.getMonth()-3);
+    } else if ($timeframe === "6-months") {
+      return today.setMonth(today.getMonth()-6);
+    } else if ($timeframe === "1-year") {
+      return today.setFullYear(today.getFullYear()-1);
+    } else if ($timeframe === "2-years") {
+      return today.setFullYear(today.getFullYear()-2);
+    } else if ($timeframe === "5-years") {
+      return today.setFullYear(today.getFullYear()-5);
+    }
+  }
 
 });
 
