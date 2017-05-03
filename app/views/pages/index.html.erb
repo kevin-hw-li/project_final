@@ -24,7 +24,7 @@
 
 <div class="backTest">
   <p>
-    <input id="portfolio" type="text" placeholder="Portfolio amount"/>
+    <!-- <input id="portfolio" type="text" placeholder="Portfolio amount"/> -->
     <input id="stock" type="text" placeholder="Stock"/>
     <label>Timeframe:</label>
     <select id="testTimeframe" class="dropdown">
@@ -38,7 +38,7 @@
   </p>
   <p>
     <label>Buy:</label>
-    <input id="buyShares" type="text" placeholder="No. of shares"/>
+    <input id="buyNumOfShares" type="text" placeholder="No. of shares"/>
     <select id="buyIndicators" class="dropdown">
         <option>RSI10</option>
         <option selected="selected">RSI14</option>
@@ -58,7 +58,7 @@
 
   <p>
     <label>Sell:</label>
-    <input id="sellShares" type="text" placeholder="No. of shares"/>
+    <input id="sellNumOfShares" type="text" placeholder="No. of shares"/>
     <select id="sellIndicators" class="dropdown">
         <option>RSI10</option>
         <option selected="selected">RSI14</option>
@@ -78,4 +78,5 @@
   <p>
     <input id="test" type="submit" value="Test"/>
   </p>
+  <div id="testResult"></div>
 </div>
