@@ -164,14 +164,40 @@ var generateChart = function (apiurl) {
 
 
     var $quote = $("#quote").val();
-    currentPrice = data[data.length-1].close
+    currentPrice = data[data.length-1].close;
+    previousPrice = data[data.length-2].close;
+    priceChange = (currentPrice - previousPrice).toFixed(2);
+    percentChange = Math.abs((100 * priceChange / previousPrice).toFixed(2));
+
+    var genNum = function (num) {
+      if (num >= 0) {
+        return "+" + num;
+      } else {
+        return num;
+      }
+    }
 
     svg.append('text')
       .attr("x", 5)
       .attr("y", 15)
-      .text($quote.toUpperCase() + " - " + currentPrice + " USD");
+      .attr("class", "price")
+      .text($quote.toUpperCase() + " - " + currentPrice + " USD")
 
+    $('.price').css("fontWeight", "bold")
     $("#quote").val("")
+
+    svg.append('text')
+      .attr("x", 5)
+      .attr("y", 30)
+      .attr("class", "change")
+      .text(genNum(priceChange) + " (" + percentChange + "%)");
+
+    if (priceChange >= 0) {
+      $('.change').css("fill", "green");
+    } else {
+      $('.change').css("fill", "red");
+    }
+
   });
 
   function enter() {
