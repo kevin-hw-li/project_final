@@ -283,13 +283,41 @@ $(document).ready(function () {
         };
       }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
 
-      datee = _.pluck(data, "date")
-      dateMinus14 = datee.slice(14, datee.length)
-      closee = _.pluck(data, "close")
-      closeMinus14 = closee.slice(14, closee.length)
-      rsi14 = RSI.calculate({period: 14, values: closee})
+      var $buyIndicator = $("#buyIndicator").val()
+      var $sellIndicator = $("#sellIndicator").val()
+      var periodPattern = /10|14|20/
+      var indicatorPattern = /RSI|SMA/
+      var buyIndicatorSymbol = indicatorPattern.exec($buyIndicator).toString()
+      var sellIndicatorSymbol = indicatorPattern.exec($sellIndicator).toString()
+      var buyIndicatorPeriod = parseInt(periodPattern.exec($buyIndicator))
+      var sellIndicatorPeriod = parseInt(periodPattern.exec($sellIndicator))
 
-      dateCloseRSI = _.zip(dateMinus14, closeMinus14, rsi14)
+      dates = _.pluck(data, "date")
+      buyDates = dates.slice(buyIndicatorPeriod, dates.length)
+      sellDates = dates.slice(sellIndicatorPeriod, dates.length)
+
+      closes = _.pluck(data, "close")
+      buyCloses = closes.slice(buyIndicatorPeriod, closes.length)
+      sellCloses = closes.slice(sellIndicatorPeriod, closes.length)
+
+      if (buyIndicatorSymbol === "RSI") {
+        buyInd = RSI.calculate({period: buyIndicatorPeriod, values: closes})
+      } else if (buyIndicatorSymbol === "SMA") {
+        buyDates = dates.slice(buyIndicatorPeriod-1, dates.length)
+        buyCloses = closes.slice(buyIndicatorPeriod-1, closes.length)
+        buyInd = SMA.calculate({period: buyIndicatorPeriod, values: closes})
+      }
+
+      if (sellIndicatorSymbol === "RSI") {
+        sellInd = RSI.calculate({period: sellIndicatorPeriod, values: closes})
+      } else if (sellIndicatorSymbol === "SMA") {
+        sellDates = dates.slice(sellIndicatorPeriod-1, dates.length)
+        sellCloses = closes.slice(sellIndicatorPeriod-1, closes.length)
+        sellInd = SMA.calculate({period: sellIndicatorPeriod, values: closes})
+      }
+
+      buyDateCloseInd = _.zip(buyDates, buyCloses, buyInd)
+      sellDateCloseInd = _.zip(sellDates, sellCloses, sellInd)
 
       // var portfolio = $("#portfolio").val();
       var $stock = $("#stock").val();
@@ -309,15 +337,17 @@ $(document).ready(function () {
       var totalSold = 0
       var result = 0
 
-      buyData = _.filter(dateCloseRSI, function(el){
-        return operators[buyOperator](el[2], buyIndicatorValue)
+      buyData = _.filter(buyDateCloseInd, function(el){
+        return operators[buyOperator](el[2], buyIndicatorValue) && buyIndicatorValue != ""
       })
-      sellData = _.filter(dateCloseRSI, function(el){
-        return operators[sellOperator](el[2], sellIndicatorValue)
+      sellData = _.filter(sellDateCloseInd, function(el){
+        return operators[sellOperator](el[2], sellIndicatorValue) && sellIndicatorValue != ""
       })
 
       if (buyData.length === 0) {
         $testResult.append("<p>No matches for the buying criteria.</p>")
+      // } else if (sellData.length === 0) {
+      //   $testResult.append("<p>No matches for the selling criteria.</p>")
       } else {
         for (var i = 0; i < buyData.length; i++) {
           buyDate = buyData[i][0]
