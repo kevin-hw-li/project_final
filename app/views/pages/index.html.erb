@@ -1,21 +1,81 @@
 <h1>Hello World</h1>
-<input id="quote" type="text"/>
-<input id="search" type="submit" value="Search"/>
-<p>
-  <label>Timeframe</label>
-  <select id="timeframe" class="dropdown">
-      <option>1-month</option>
-      <option>3-months</option>
-      <option selected="selected">6-months</option>
-      <option>1-year</option>
-      <option>2-years</option>
-      <option>5-years</option>
-  </select>
+<div class="searchQuote">
+  <input id="quote" type="text" placeholder="Quote"/>
+  <input id="search" type="submit" value="Search"/>
+  <p>
+    <label>Timeframe:</label>
+    <select id="timeframe" class="dropdown">
+        <option>1-month</option>
+        <option>3-months</option>
+        <option selected="selected">6-months</option>
+        <option>1-year</option>
+        <option>2-years</option>
+        <option>5-years</option>
+    </select>
 
-  <label>Interval</label>
-  <select id="interval" class="dropdown">
-      <option selected="selected">Daily</option>
-      <option>Weekly</option>
-      <option>Monthly</option>
-  </select>
-<p>
+    <label>Interval:</label>
+    <select id="interval" class="dropdown">
+        <option selected="selected">Daily</option>
+        <option>Weekly</option>
+        <option>Monthly</option>
+    </select>
+  <p>
+</div>
+
+<div class="backTest">
+  <p>
+    <input id="portfolio" type="text" placeholder="Portfolio amount"/>
+    <input id="stock" type="text" placeholder="Stock"/>
+    <label>Timeframe:</label>
+    <select id="testTimeframe" class="dropdown">
+        <option>1-month</option>
+        <option>3-months</option>
+        <option selected="selected">6-months</option>
+        <option>1-year</option>
+        <option>2-years</option>
+        <option>5-years</option>
+    </select>
+  </p>
+  <p>
+    <label>Buy:</label>
+    <input id="buyShares" type="text" placeholder="No. of shares"/>
+    <select id="buyIndicators" class="dropdown">
+        <option>RSI10</option>
+        <option selected="selected">RSI14</option>
+        <option>RSI21</option>
+        <option>SMA10</option>
+        <option>SMA20</option>
+        <option>SMA50</option>
+        <option>SMA100</option>
+        <option>SMA250</option>
+    </select>
+    <select id="buyOperator" class="dropdown">
+      <option selected="selected"><</option>
+      <option>></option>
+    </select>
+    <input id="buyIndicatorValue" type="text"/>
+  </p>
+
+  <p>
+    <label>Sell:</label>
+    <input id="sellShares" type="text" placeholder="No. of shares"/>
+    <select id="sellIndicators" class="dropdown">
+        <option>RSI10</option>
+        <option selected="selected">RSI14</option>
+        <option>RSI21</option>
+        <option>SMA10</option>
+        <option>SMA20</option>
+        <option>SMA50</option>
+        <option>SMA100</option>
+        <option>SMA250</option>
+    </select>
+    <select id="sellOperator" class="dropdown">
+      <option selected="selected">></option>
+      <option><</option>
+    </select>
+    <input id="sellIndicatorValue" type="text"/>
+  </p>
+  <p>
+    <input id="test" type="submit" value="Test"/>
+  </p>
+</div>

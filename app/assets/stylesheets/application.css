@@ -215,3 +215,11 @@ path.middle, path.zero {
 .tradearrow path.highlight.sell {
    stroke: #9900FF;
 }
+
+.searchQuote {
+  float: left;
+}
+
+.backTest {
+  float:right;
+}

@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require d3
 //= require techan
+//= require browser
 //= require underscore
 //= require_tree .
 
@@ -119,6 +120,14 @@ var generateChart = function (apiurl) {
         volume: +d.Volume
       };
     }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
+
+    rsi = RSI.calculate({period: 14, values: _.pluck(data, "close")})
+    close = _.pluck(data, "close")
+    closeMinus14 = close.slice(14, close.length)
+    closeToRsi = _.object(closeMinus14, rsi)
+    // debugger
+
+    var portfolio = $("#portfolio").val();
 
     x.domain(data.map(accessor.d));
     y.domain(techan.scale.plot.ohlc(data, accessor).domain()); // render the time scale
