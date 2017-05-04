@@ -16,6 +16,7 @@
 //= require techan
 //= require browser
 //= require underscore-min
+//= require materialize
 //= require_tree .
 
 
