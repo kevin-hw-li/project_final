@@ -2,6 +2,11 @@
   <div class="nav-wrapper container">
     <%= link_to "StockBT", root_path, class: "brand-logo", id: "logo-container" %>
     <ul class="right hide-on-med-and-down">
+      <% if @current_user %>
+        <li>
+          Welcome back, <%= @current_user.username %>!
+        </li>
+      <% end %>
       <% if !@current_user %>
         <li><%= link_to "Sign up", new_user_path %></li>
         <li><%= link_to "Sign in", signin_path %></li>

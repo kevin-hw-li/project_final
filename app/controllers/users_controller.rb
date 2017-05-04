@@ -19,7 +19,7 @@ class UsersController < ApplicationController
   private
 
   def clean_params
-    params.require(:user).permit(:email, :password)
+    params.require(:user).permit(:username, :email, :password)
   end
 
 end

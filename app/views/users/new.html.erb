@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="row">
+    <div class="col s4"></div>
+    <div class="signup col s4">
+      <h3>Sign up now</h3>
+    </div>
+    <div class="col s4"></div>
+  </div>
+
+  <%= form_for @user do |el| %>
+    <div class="row">
+        <div class="col s4"></div>
+        <div class="input-field col s4">
+          <%= el.text_field :username %>
+          <label>Username</label>
+        </div>
+        <div class="col s4"></div>
+    </div>
+    <div class="row">
+        <div class="col s4"></div>
+        <div class="input-field col s4">
+          <%= el.text_field :email %>
+          <label>Email</label>
+        </div>
+        <div class="col s4"></div>
+    </div>
+    <div class="row">
+        <div class="col s4"></div>
+        <div class="input-field col s4">
+          <%= el.password_field :password %>
+          <label>Password</label>
+        </div>
+        <div class="col s4"></div>
+    </div>
+    <div class="row">
+        <div class="col s4"></div>
+        <div class="signup input-field col s4">
+          <%= el.submit "Sign Up", class: "btn waves-effect red" %>
+        </div>
+        <div class="col s4"></div>
+    </div>
+  <% end %>
+</div>

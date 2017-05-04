@@ -243,3 +243,11 @@ svg {
 text {
   font-size: 12px;
 }
+
+.signup {
+  text-align: center;
+}
+
+.signin {
+  text-align: center;
+}
