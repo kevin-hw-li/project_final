@@ -1,0 +1,25 @@
+<nav class="blue-grey darken-4" role="navigation">
+  <div class="nav-wrapper container">
+    <%= link_to "StockBT", root_path, class: "brand-logo", id: "logo-container" %>
+    <ul class="right hide-on-med-and-down">
+      <% if !@current_user %>
+        <li><%= link_to "Sign up", new_user_path %></li>
+        <li><%= link_to "Sign in", signin_path %></li>
+      <% end %>
+      <% if @current_user %>
+        <li><%= link_to "Sign out", signout_path, method: :delete %></li>
+      <% end %>
+    </ul>
+
+    <ul id="nav-mobile" class="side-nav">
+      <% if !@current_user %>
+        <li><%= link_to "Sign up", new_user_path %></li>
+        <li><%= link_to "Sign in", signin_path %></li>
+      <% end %>
+      <% if @current_user %>
+        <li><%= link_to "Sign out", signout_path, method: :delete %></li>
+      <% end %>
+    </ul>
+    <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+  </div>
+</nav>

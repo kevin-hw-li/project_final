@@ -15,13 +15,19 @@
 //= require d3
 //= require techan
 //= require browser
-//= require underscore
+//= require underscore-min
 //= require_tree .
 
 
-
+(function($){
+  $(function(){
+    $('.button-collapse').sideNav();
+  }); // end of document ready
+})(jQuery); // end of jQuery name space
 
 $(document).ready(function () {
+
+  $('select').material_select();
 
   var $stock = $("#stock");
   var $quote = $("#quote");
@@ -55,7 +61,6 @@ $(document).ready(function () {
   });
 
   $("#search").on("click", function (e) {
-
     var $timeframe = $("#timeframe").val();
     var startDate = formatTime(generateStartDate($timeframe));
     var interval = $("#interval").val().toLowerCase();
@@ -71,24 +76,24 @@ $(document).ready(function () {
   });
 
   $("#buyIndicator").on("change", function () {
-    $("#buyClosePrice").remove()
+    $(".buyinput, #buyClosePrice").remove()
     if (indicatorPattern.exec($buyIndicator.val()).toString() === "SMA") {
-      $("#buyIndicatorValue").val("").hide()
-      $("#buyFields").append("<label id='buyClosePrice'>Price</label>")
+      $(".buyhide, #buyIndicatorValue").val("").hide()
+      $(".buyFields").append("<div class='buyinput input-field col s2'><input disabled id='buyClosePrice' type='text' placeholder='Price'/></div>")
     } else {
-      $("#buyIndicatorValue").show()
-      $("#buyClosePrice").remove()
+      $(".buyhide, #buyIndicatorValue").show()
+      $(".buyinput, #buyClosePrice").remove()
     }
   });
 
   $("#sellIndicator").on("change", function () {
-    $("#sellClosePrice").remove()
+    $(".sellinput, #sellClosePrice").remove()
     if (indicatorPattern.exec($sellIndicator.val()).toString() === "SMA") {
-      $("#sellIndicatorValue").val("").hide()
-      $("#sellFields").append("<label id='sellClosePrice'>Price</label>")
+      $(".sellhide, #sellIndicatorValue").val("").hide()
+      $(".sellFields").append("<div class='sellinput input-field col s2'><input disabled id='sellClosePrice' type='text' placeholder='Price'/></div>")
     } else {
-      $("#sellIndicatorValue").show()
-      $("#sellClosePrice").remove()
+      $(".sellhide, #sellIndicatorValue").show()
+      $(".sellinput, #sellClosePrice").remove()
     }
   });
 
@@ -111,11 +116,15 @@ $(document).ready(function () {
 
   var generateChart = function (apiurl) {
 
+    if ($quote.val() === "") {
+      return
+    }
+
     $("svg").remove();
 
     var margin = {top: 20, right: 50, bottom: 30, left: 50},
-        width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        width = 1050 - margin.left - margin.right,
+        height = 550 - margin.top - margin.bottom;
 
     var x = techan.scale.financetime()
       .range([0, width]);
@@ -182,7 +191,7 @@ $(document).ready(function () {
       .on("out", out)
       .on("move", move);
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select(".showChart").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -356,7 +365,7 @@ $(document).ready(function () {
         '<': function(a, b) { return a < b },
         '>': function(a, b) { return a > b },
       };
-      var $testResult = $("#testResult")
+      var $testResult = $(".testResult")
       $testResult.html("");
       var buyTotal = 0
       var sellTotal = 0

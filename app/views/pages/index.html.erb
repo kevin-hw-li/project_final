@@ -1,82 +1,115 @@
-<h1>Hello World</h1>
-<div class="searchQuote">
-  <input id="quote" type="text" placeholder="Quote"/>
-  <input id="search" type="submit" value="Search"/>
-  <p>
-    <label>Timeframe:</label>
-    <select id="timeframe" class="dropdown">
+<!-- <h1>Stock Backtest</h1> -->
+<div class="container">
+  <div class="searchQuote row">
+    <div class="input-field col s6">
+      <input id="quote" type="text" placeholder="Stock Quote"/>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s6">
+      <select id="timeframe" class="dropdown">
         <option>1-month</option>
         <option>3-months</option>
         <option selected="selected">6-months</option>
         <option>1-year</option>
         <option>2-years</option>
         <option>5-years</option>
-    </select>
+      </select>
+      <label>Timeframe</label>
+    </div>
 
-    <label>Interval:</label>
-    <select id="interval" class="dropdown">
-        <option selected="selected">Daily</option>
-        <option>Weekly</option>
-        <option>Monthly</option>
-    </select>
-  <p>
-</div>
+    <div class="input-field col s6">
+      <select id="interval" class="dropdown">
+          <option selected="selected">Daily</option>
+          <option>Weekly</option>
+          <option>Monthly</option>
+      </select>
+      <label>Interval</label>
+    </div>
+  </div>
+  <button id="search" class="btn waves-effect red" type="submit">Search</button>
+  <div class="row showChart"></div>
 
-<div class="backTest">
-  <p>
-    <!-- <input id="portfolio" type="text" placeholder="Portfolio amount"/> -->
-    <input id="stock" type="text" placeholder="Stock"/>
-    <label>Timeframe:</label>
-    <select id="testTimeframe" class="dropdown">
-        <option>1-month</option>
-        <option>3-months</option>
-        <option selected="selected">6-months</option>
-        <option>1-year</option>
-        <option>2-years</option>
-        <option>5-years</option>
-    </select>
-  </p>
-  <p id="buyFields">
-    <label>Buy:</label>
-    <input id="buyNumOfShares" type="text" placeholder="No. of shares"/>
-    <select id="buyIndicator" class="dropdown">
-        <option>RSI10</option>
-        <option selected="selected">RSI14</option>
-        <option>RSI20</option>
-        <option>SMA10</option>
-        <option>SMA20</option>
-        <option>SMA50</option>
-        <option>SMA100</option>
-        <option>SMA250</option>
-    </select>
-    <select id="buyOperator" class="dropdown">
-      <option selected="selected"><</option>
-      <option>></option>
-    </select>
-    <input id="buyIndicatorValue" type="text"/>
-  </p>
+  <% if @current_user %>
 
-  <p id="sellFields">
-    <label>Sell:</label>
-    <input id="sellNumOfShares" type="text" placeholder="No. of shares"/>
-    <select id="sellIndicator" class="dropdown">
-        <option>RSI10</option>
-        <option selected="selected">RSI14</option>
-        <option>RSI20</option>
-        <option>SMA10</option>
-        <option>SMA20</option>
-        <option>SMA50</option>
-        <option>SMA100</option>
-        <option>SMA250</option>
-    </select>
-    <select id="sellOperator" class="dropdown">
-      <option selected="selected">></option>
-      <option><</option>
-    </select>
-    <input id="sellIndicatorValue" type="text"/>
-  </p>
-  <p>
-    <input id="test" type="submit" value="Test"/>
-  </p>
-  <div id="testResult"></div>
+  <div class="backTest row">
+    <div class="input-field col s6">
+      <input id="stock" type="text" placeholder="Stock Quote"/>
+    </div>
+    <div class="input-field col s6">
+      <select id="testTimeframe" class="dropdown">
+          <option>1-month</option>
+          <option>3-months</option>
+          <option selected="selected">6-months</option>
+          <option>1-year</option>
+          <option>2-years</option>
+          <option>5-years</option>
+      </select>
+      <label>Timeframe</label>
+    </div>
+  </div>
+
+  <div class="row buyFields">
+    <div class="input-field col s6">
+      <input id="buyNumOfShares" type="text" placeholder="No. of shares"/>
+      <label>Buy</label>
+    </div>
+    <div class="input-field col s2">
+      <select id="buyIndicator" class="dropdown">
+          <option>RSI10</option>
+          <option selected="selected">RSI14</option>
+          <option>RSI20</option>
+          <option>SMA10</option>
+          <option>SMA20</option>
+          <option>SMA50</option>
+          <option>SMA100</option>
+          <option>SMA250</option>
+      </select>
+      <label>Indicator</label>
+    </div>
+    <div class="input-field col s2">
+      <select id="buyOperator" class="dropdown">
+        <option selected="selected"><</option>
+        <option>></option>
+      </select>
+    </div>
+    <div class="buyhide input-field col s2">
+      <input id="buyIndicatorValue" type="text"/>
+    </div>
+  </div>
+
+  <div class="row sellFields">
+    <div class="input-field col s6">
+      <input id="sellNumOfShares" type="text" placeholder="No. of shares"/>
+      <label>Sell</label>
+    </div>
+    <div class="input-field col s2">
+      <select id="sellIndicator" class="dropdown">
+          <option>RSI10</option>
+          <option selected="selected">RSI14</option>
+          <option>RSI20</option>
+          <option>SMA10</option>
+          <option>SMA20</option>
+          <option>SMA50</option>
+          <option>SMA100</option>
+          <option>SMA250</option>
+      </select>
+      <label>Indicator</label>
+    </div>
+    <div class="input-field col s2">
+      <select id="sellOperator" class="dropdown">
+        <option selected="selected">></option>
+        <option><</option>
+      </select>
+    </div>
+    <div class="sellhide input-field col s2">
+      <input id="sellIndicatorValue" type="text"/>
+    </div>
+  </div>
+  <button id="test" class="btn waves-effect red" type="submit">Test</button>
+  <div class="testResult"></div>
+
+  <% end %>
+  
 </div>
