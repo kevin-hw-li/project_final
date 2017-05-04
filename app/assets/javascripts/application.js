@@ -19,11 +19,20 @@
 //= require_tree .
 
 
+
+
 $(document).ready(function () {
 
+  var $stock = $("#stock");
+  var $quote = $("#quote");
   var formatTime = d3.timeFormat("%Y-%m-%d");
   var parseDate = d3.timeParse("%Y-%m-%d");
   var apikey = "LxUsPWgzw_oJMSdTP3MH"
+
+  var $buyIndicator = $("#buyIndicator")
+  var $sellIndicator = $("#sellIndicator")
+  var periodPattern = /10|14|20/
+  var indicatorPattern = /RSI|SMA/
 
   var genNum = function (num) {
     if (num >= 0) {
@@ -46,20 +55,41 @@ $(document).ready(function () {
   });
 
   $("#search").on("click", function (e) {
-    var $quote = $("#quote").val();
+
     var $timeframe = $("#timeframe").val();
     var startDate = formatTime(generateStartDate($timeframe));
     var interval = $("#interval").val().toLowerCase();
-    var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote + ".csv?start_date=" + startDate + "&collapse=" + interval + "&api_key=" + apikey
+    var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote.val() + ".csv?start_date=" + startDate + "&collapse=" + interval + "&api_key=" + apikey
     generateChart(apiurl);
   });
 
   $("#test").on("click", function (e) {
-    var $stock = $("#stock").val();
     var $testTimeframe = $("#testTimeframe").val();
     var startDate = formatTime(generateStartDate($testTimeframe));
-    var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $stock + ".csv?start_date=" + startDate + "&api_key=" + apikey
+    var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $stock.val() + ".csv?start_date=" + startDate + "&api_key=" + apikey
     generateTestResult(apiurl);
+  });
+
+  $("#buyIndicator").on("change", function () {
+    $("#buyClosePrice").remove()
+    if (indicatorPattern.exec($buyIndicator.val()).toString() === "SMA") {
+      $("#buyIndicatorValue").val("").hide()
+      $("#buyFields").append("<label id='buyClosePrice'>Price</label>")
+    } else {
+      $("#buyIndicatorValue").show()
+      $("#buyClosePrice").remove()
+    }
+  });
+
+  $("#sellIndicator").on("change", function () {
+    $("#sellClosePrice").remove()
+    if (indicatorPattern.exec($sellIndicator.val()).toString() === "SMA") {
+      $("#sellIndicatorValue").val("").hide()
+      $("#sellFields").append("<label id='sellClosePrice'>Price</label>")
+    } else {
+      $("#sellIndicatorValue").show()
+      $("#sellClosePrice").remove()
+    }
   });
 
   var generateStartDate = function (el) {
@@ -222,7 +252,6 @@ $(document).ready(function () {
         .each(function(d) { move(d); }); // Display the current data
 
 
-      var $quote = $("#quote").val();
       currentPrice = data[data.length-1].close;
       previousPrice = data[data.length-2].close;
       priceChange = (currentPrice - previousPrice).toFixed(2);
@@ -232,10 +261,10 @@ $(document).ready(function () {
         .attr("x", 5)
         .attr("y", 15)
         .attr("class", "price")
-        .text($quote.toUpperCase() + " - " + currentPrice + " USD")
+        .text($quote.val().toUpperCase() + " - " + currentPrice + " USD")
 
       $('.price').css("fontWeight", "bold")
-      $("#quote").val("")
+      $quote.val("")
 
       svg.append('text')
         .attr("x", 5)
@@ -283,14 +312,10 @@ $(document).ready(function () {
         };
       }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
 
-      var $buyIndicator = $("#buyIndicator").val()
-      var $sellIndicator = $("#sellIndicator").val()
-      var periodPattern = /10|14|20/
-      var indicatorPattern = /RSI|SMA/
-      var buyIndicatorSymbol = indicatorPattern.exec($buyIndicator).toString()
-      var sellIndicatorSymbol = indicatorPattern.exec($sellIndicator).toString()
-      var buyIndicatorPeriod = parseInt(periodPattern.exec($buyIndicator))
-      var sellIndicatorPeriod = parseInt(periodPattern.exec($sellIndicator))
+      var buyIndicatorSymbol = indicatorPattern.exec($buyIndicator.val()).toString()
+      var sellIndicatorSymbol = indicatorPattern.exec($sellIndicator.val()).toString()
+      var buyIndicatorPeriod = parseInt(periodPattern.exec($buyIndicator.val()))
+      var sellIndicatorPeriod = parseInt(periodPattern.exec($sellIndicator.val()))
 
       dates = _.pluck(data, "date")
       buyDates = dates.slice(buyIndicatorPeriod, dates.length)
@@ -320,7 +345,7 @@ $(document).ready(function () {
       sellDateCloseInd = _.zip(sellDates, sellCloses, sellInd)
 
       // var portfolio = $("#portfolio").val();
-      var $stock = $("#stock").val();
+
       var buyNumOfShares = $("#buyNumOfShares").val();
       var buyIndicatorValue = $("#buyIndicatorValue").val();
       var buyOperator = $("#buyOperator").val();
@@ -333,36 +358,67 @@ $(document).ready(function () {
       };
       var $testResult = $("#testResult")
       $testResult.html("");
-      var totalPurchased = 0
-      var totalSold = 0
+      var buyTotal = 0
+      var sellTotal = 0
+      var sharesHolding = 0
       var result = 0
 
-      buyData = _.filter(buyDateCloseInd, function(el){
-        return operators[buyOperator](el[2], buyIndicatorValue) && buyIndicatorValue != ""
-      })
-      sellData = _.filter(sellDateCloseInd, function(el){
-        return operators[sellOperator](el[2], sellIndicatorValue) && sellIndicatorValue != ""
-      })
+
+      if (buyNumOfShares === "") {
+        $testResult.append("<p>Please insert number of shares to buy.</p>")
+        return
+      } else if (buyIndicatorSymbol === "RSI") {
+        buyData = _.filter(buyDateCloseInd, function(el){
+          return operators[buyOperator](el[2], buyIndicatorValue) && buyIndicatorValue != ""
+        })
+      } else if (buyIndicatorSymbol === "SMA") {
+        buyData = _.filter(buyDateCloseInd, function(el){
+          return operators[buyOperator](el[2], el[1])
+        })
+      };
+
+      if (sellNumOfShares === "") {
+        $testResult.append("<p>Please insert number of shares to sell.</p>")
+        return
+      } else if (sellIndicatorSymbol === "RSI") {
+        sellData = _.filter(sellDateCloseInd, function(el){
+          return operators[sellOperator](el[2], sellIndicatorValue) && sellIndicatorValue != ""
+        })
+      } else if (sellIndicatorSymbol === "SMA") {
+        sellData = _.filter(sellDateCloseInd, function(el){
+          return operators[sellOperator](el[2], el[1])
+        })
+      };
 
       if (buyData.length === 0) {
         $testResult.append("<p>No matches for the buying criteria.</p>")
-      // } else if (sellData.length === 0) {
-      //   $testResult.append("<p>No matches for the selling criteria.</p>")
+        return
+      } else if (sellData.length === 0) {
+        $testResult.append("<p>No matches for the selling criteria.</p>")
+        // return
       } else {
         for (var i = 0; i < buyData.length; i++) {
           buyDate = buyData[i][0]
           buyPrice = buyData[i][1]
-          $testResult.append("<p>" + formatTime(buyDate) + ": Buy " + buyNumOfShares + " shares of " + $stock.toUpperCase() + "@" + buyPrice.toFixed(2) + " = " + (buyPrice * buyNumOfShares).toFixed(2) + "</p>")
-          totalPurchased += buyPrice * buyNumOfShares
+          buyIndVal = buyData[i][2]
+          $testResult.append("<p>" + formatTime(buyDate) + ": " + $buyIndicator.val() + " = " + buyIndVal.toFixed(2) + ", Buy " + buyNumOfShares + " shares of " + $stock.val().toUpperCase() + "@" + buyPrice.toFixed(2) + " = " + (buyPrice * buyNumOfShares).toFixed(2) + "</p>")
+          buyTotal += buyPrice * buyNumOfShares
+          sharesHolding += parseInt(buyNumOfShares)
         }
         for (var i = 0; i < sellData.length; i++) {
-          sellDate = sellData[i][0]
-          sellPrice = sellData[i][1]
-          $testResult.append("<p>" + formatTime(sellDate) + ": Sell " + sellNumOfShares + " shares of " + $stock.toUpperCase() + "@" + sellPrice.toFixed(2) + " = " + (sellPrice * sellNumOfShares).toFixed(2) + "</p>")
-          totalSold += sellPrice * sellNumOfShares
+          if (sharesHolding < parseInt(sellNumOfShares)) {
+            continue
+          } else {
+            sellDate = sellData[i][0]
+            sellPrice = sellData[i][1]
+            sellIndVal = sellData[i][2]
+            $testResult.append("<p>" + formatTime(sellDate) + ": " + $sellIndicator.val() + " = " + sellIndVal.toFixed(2) + ", Sell " + sellNumOfShares + " shares of " + $stock.val().toUpperCase() + "@" + sellPrice.toFixed(2) + " = " + (sellPrice * sellNumOfShares).toFixed(2) + "</p>")
+            sellTotal += sellPrice * sellNumOfShares
+            sharesHolding -= parseInt(sellNumOfShares)
+          }
         }
-        result = (totalSold - totalPurchased).toFixed(2)
-        $testResult.append("<p>Result: " + genNum(result) + "</p>")
+        result = (sellTotal - buyTotal).toFixed(2)
+        $testResult.append("<p>Outcome = " + "Shares still holding: " + sharesHolding + ", " + "Balance: " + genNum(result) + "</p>")
       }
       // debugger
     })

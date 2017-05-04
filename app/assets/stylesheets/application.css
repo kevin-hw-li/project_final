@@ -223,3 +223,7 @@ path.middle, path.zero {
 .backTest {
   float:right;
 }
+
+label {
+  font-size: 12px;
+}
