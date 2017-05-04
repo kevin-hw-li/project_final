@@ -102,15 +102,15 @@ $(document).ready(function () {
     var today = new Date();
     if (el === "1-month") {
       return today.setMonth(today.getMonth()-1);
-    } else if (el === "3-months") {
+    } else if (el === "3 months") {
       return today.setMonth(today.getMonth()-3);
-    } else if (el === "6-months") {
+    } else if (el === "6 months") {
       return today.setMonth(today.getMonth()-6);
-    } else if (el === "1-year") {
+    } else if (el === "1 year") {
       return today.setFullYear(today.getFullYear()-1);
-    } else if (el === "2-years") {
+    } else if (el === "2 years") {
       return today.setFullYear(today.getFullYear()-2);
-    } else if (el === "5-years") {
+    } else if (el === "5 years") {
       return today.setFullYear(today.getFullYear()-5);
     }
   };
