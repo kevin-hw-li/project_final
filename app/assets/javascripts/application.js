@@ -26,7 +26,15 @@
   }); // end of document ready
 })(jQuery); // end of jQuery name space
 
+
 $(document).ready(function () {
+
+  (function($){
+    $(function(){
+      $("#quote").val("FB");
+      generateChart("https://www.quandl.com/api/v3/datasets/WIKI/FB.csv?start_date=2017-01-01&collapse=daily&api_key=LxUsPWgzw_oJMSdTP3MH");
+    });
+  })(jQuery);
 
   $('select').material_select();
 
