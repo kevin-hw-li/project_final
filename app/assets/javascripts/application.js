@@ -231,6 +231,12 @@ $(document).ready(function () {
       y.domain(techan.scale.plot.ohlc(data, accessor).domain()); // render the time scale
       yVolume.domain(techan.scale.plot.volume(data).domain());
 
+      currentPrice = data[data.length-1].close;
+      previousPrice = data[data.length-2].close;
+      currentDate = data[data.length-1].date;
+      priceChange = (currentPrice - previousPrice).toFixed(2);
+      percentChange = Math.abs((100 * priceChange / previousPrice).toFixed(2));
+
       svg.append("g")
         .datum(data)
         .attr("class", "volume")
@@ -268,12 +274,6 @@ $(document).ready(function () {
         .datum({ x: x.domain()[80], y: 67.5 })
         .call(crosshair)
         .each(function(d) { move(d); }); // Display the current data
-
-
-      currentPrice = data[data.length-1].close;
-      previousPrice = data[data.length-2].close;
-      priceChange = (currentPrice - previousPrice).toFixed(2);
-      percentChange = Math.abs((100 * priceChange / previousPrice).toFixed(2));
 
       svg.append('text')
         .attr("x", 5)
@@ -443,13 +443,14 @@ $(document).ready(function () {
         }
         result = (sellTotal - buyTotal).toFixed(2)
         priceCurrent = data[data.length-1].close;
+        dateCurrent = data[data.length-1].date;
         netPosition = (parseFloat(result) + (sharesHolding * priceCurrent)).toFixed(2)
 
-        $("tbody").append("<tr><th>OUTCOME</th><th>" + formatTime(new Date) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='result'>" + result + "</th></tr>")
+        $("tbody").append("<tr><th>OUTCOME</th><th>" + formatTime(dateCurrent) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='result'>" + result + "</th></tr>")
 
-        $("tbody").append("<tr><th>HOLDING</th><th>" + formatTime(new Date) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + $stock.val().toUpperCase() + "</th><th>" + sharesHolding + "</th><th>" + priceCurrent + "</th><th>" + (sharesHolding * priceCurrent).toFixed(2) + "</th></tr>")
+        $("tbody").append("<tr><th>HOLDING</th><th>" + formatTime(dateCurrent) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + $stock.val().toUpperCase() + "</th><th>" + sharesHolding + "</th><th>" + priceCurrent + "</th><th>" + (sharesHolding * priceCurrent).toFixed(2) + "</th></tr>")
 
-        $("tbody").append("<tr><th>NET POS</th><th>" + formatTime(new Date) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='netPos'>" + netPosition + "</th></tr>")
+        $("tbody").append("<tr><th>NET POS</th><th>" + formatTime(dateCurrent) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='netPos'>" + netPosition + "</th></tr>")
 
         if (parseFloat(result) >= 0) {
           $('.result').css("color", "green");
