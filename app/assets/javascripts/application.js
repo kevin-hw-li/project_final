@@ -108,7 +108,7 @@ $(document).ready(function () {
 
   var generateStartDate = function (el) {
     var today = new Date();
-    if (el === "1-month") {
+    if (el === "1 month") {
       return today.setMonth(today.getMonth()-1);
     } else if (el === "3 months") {
       return today.setMonth(today.getMonth()-3);
