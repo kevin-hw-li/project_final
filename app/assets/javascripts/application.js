@@ -132,7 +132,7 @@ $(document).ready(function () {
     $("svg").remove();
 
     var margin = {top: 20, right: 50, bottom: 30, left: 50},
-        width = 1050 - margin.left - margin.right,
+        width = 1025 - margin.left - margin.right,
         height = 550 - margin.top - margin.bottom;
 
     var x = techan.scale.financetime()
@@ -415,11 +415,15 @@ $(document).ready(function () {
         $testResult.append("<p>No matches for the selling criteria.</p>")
         // return
       } else {
+        // debugger
+        $testResult.append("<table class='bordered centered highlight'><thead><tr><th>Action</th><th>Date</th><th>Indicator</th><th>Indicator Value</th><th>Stock</th><th>No. Of Shares</th><th>Price</th><th>Total</th></tr></thead><tbody></tbody></table>")
         for (var i = 0; i < buyData.length; i++) {
           buyDate = buyData[i][0]
           buyPrice = buyData[i][1]
           buyIndVal = buyData[i][2]
-          $testResult.append("<p>" + formatTime(buyDate) + ": " + $buyIndicator.val() + " = " + buyIndVal.toFixed(2) + ", Buy " + buyNumOfShares + " shares of " + $stock.val().toUpperCase() + "@" + buyPrice.toFixed(2) + " = " + (buyPrice * buyNumOfShares).toFixed(2) + "</p>")
+
+          $("tbody").append("<tr><td>BUY</td><td>" + formatTime(buyDate) + "</td><td>" + $buyIndicator.val() + "</td><td>" + buyIndVal.toFixed(2) + "</td><td>" + $stock.val().toUpperCase() + "</td><td>" + buyNumOfShares + "</td><td>" + buyPrice.toFixed(2) + "</td><td>" + (buyPrice * buyNumOfShares).toFixed(2) + "</td></tr>")
+
           buyTotal += buyPrice * buyNumOfShares
           sharesHolding += parseInt(buyNumOfShares)
         }
@@ -430,15 +434,37 @@ $(document).ready(function () {
             sellDate = sellData[i][0]
             sellPrice = sellData[i][1]
             sellIndVal = sellData[i][2]
-            $testResult.append("<p>" + formatTime(sellDate) + ": " + $sellIndicator.val() + " = " + sellIndVal.toFixed(2) + ", Sell " + sellNumOfShares + " shares of " + $stock.val().toUpperCase() + "@" + sellPrice.toFixed(2) + " = " + (sellPrice * sellNumOfShares).toFixed(2) + "</p>")
+
+            $("tbody").append("<tr><td>SELL</td><td>" + formatTime(sellDate) + "</td><td>" + $sellIndicator.val() + "</td><td>" + sellIndVal.toFixed(2) + "</td><td>" + $stock.val().toUpperCase() + "</td><td>" + sellNumOfShares + "</td><td>" + sellPrice.toFixed(2) + "</td><td>" + (sellPrice * sellNumOfShares).toFixed(2) + "</td></tr>")
+
             sellTotal += sellPrice * sellNumOfShares
             sharesHolding -= parseInt(sellNumOfShares)
           }
         }
         result = (sellTotal - buyTotal).toFixed(2)
-        $testResult.append("<p>Outcome = " + "Shares still holding: " + sharesHolding + ", " + "Balance: " + genNum(result) + "</p>")
+        priceCurrent = data[data.length-1].close;
+        netPosition = (parseFloat(result) + (sharesHolding * priceCurrent)).toFixed(2)
+
+        $("tbody").append("<tr><th>OUTCOME</th><th>" + formatTime(new Date) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='result'>" + result + "</th></tr>")
+
+        $("tbody").append("<tr><th>HOLDING</th><th>" + formatTime(new Date) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + $stock.val().toUpperCase() + "</th><th>" + sharesHolding + "</th><th>" + priceCurrent + "</th><th>" + (sharesHolding * priceCurrent).toFixed(2) + "</th></tr>")
+
+        $("tbody").append("<tr><th>NET POS</th><th>" + formatTime(new Date) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='netPos'>" + netPosition + "</th></tr>")
+
+        if (parseFloat(result) >= 0) {
+          $('.result').css("color", "green");
+        } else {
+          $('.result').css("color", "red");
+        }
+
+        if (netPosition >= 0) {
+          $('.netPos').css("color", "green");
+        } else {
+          $('.netPos').css("color", "red");
+        }
+
       }
-      // debugger
+
     })
   }
 

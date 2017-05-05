@@ -20,6 +20,28 @@
 @import "materialize";
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
 
+
+.footIcons {
+  margin-top: 50px;
+}
+
+.testResult {
+  margin-top: 70px;
+  font-size: 14px;
+}
+
+table td {
+  width: 100px;
+}
+
+table th {
+  text-align: center;
+}
+
+.material-icons {
+  color: grey;
+}
+
 .privacy {
   text-align: justify;
   margin-top: 0;
