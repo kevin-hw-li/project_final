@@ -1,6 +1,6 @@
 # StockBT
 
-This is an app which allows visitors to check U.S. stock quotes, and allows logged in users to back test their trading strategies.
+This is an app which allows people to check U.S. stock quotes, and allows logged in users to back test their trading strategies.
 [Access](https://stockbt.herokuapp.com/)
 
 ### LANGUAGES USED
