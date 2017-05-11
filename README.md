@@ -1,24 +1,10 @@
-# README
+# StockBT
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is an app which allows visitors to check U.S. stock quotes, and allows logged in users to back test their trading strategies.
+[Access](https://stockbt.herokuapp.com/)
 
-Things you may want to cover:
+### LANGUAGES USED
 
-* Ruby version
+Javascript (jQuery, AJAX, d3), API (Quandl), HTML, CSS (Materialize), Ruby on rails
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+##### Kevin Li
