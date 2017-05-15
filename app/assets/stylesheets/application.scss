@@ -21,11 +21,28 @@
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
 
 
+#quote, #stock {
+  text-transform: uppercase;
+}
+::-webkit-input-placeholder { /* WebKit browsers */
+    text-transform: none;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    text-transform: none;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    text-transform: none;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    text-transform: none;
+}
+
+
 .footIcons {
   margin-top: 50px;
 }
 
-.testResult {
+.testResult, .showInfo {
   margin-top: 70px;
   font-size: 14px;
 }

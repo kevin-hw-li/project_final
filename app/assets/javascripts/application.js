@@ -29,12 +29,12 @@
 
 $(document).ready(function () {
 
-  (function($){
-    $(function(){
-      $("#quote").val("FB");
-      generateChart("https://www.quandl.com/api/v3/datasets/WIKI/FB.csv?start_date=2017-01-01&collapse=daily&api_key=LxUsPWgzw_oJMSdTP3MH");
-    });
-  })(jQuery);
+  // (function($){
+  //   $(function(){
+  //     $("#quote").val("FB");
+  //     generateChart("https://www.quandl.com/api/v3/datasets/WIKI/FB.csv?start_date=2017-01-01&collapse=daily&api_key=LxUsPWgzw_oJMSdTP3MH");
+  //   });
+  // })(jQuery);
 
   $('select').material_select();
 
@@ -72,9 +72,26 @@ $(document).ready(function () {
   $("#search").on("click", function (e) {
     var $timeframe = $("#timeframe").val();
     var startDate = formatTime(generateStartDate($timeframe));
+    var startDate2 = formatTime(generateStartDate("1 year"));
     var interval = $("#interval").val().toLowerCase();
-    var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote.val() + ".csv?start_date=" + startDate + "&collapse=" + interval + "&api_key=" + apikey
-    generateChart(apiurl);
+    var apiurl1 = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote.val() + ".csv?start_date=" + startDate + "&collapse=" + interval + "&api_key=" + apikey
+    var apiurl2 = "https://www.quandl.com/api/v3/datasets/WIKI/" + $quote.val() + ".json?start_date=" + startDate2 + "&api_key=" + apikey
+    // var searchQuote = function(apiurl){
+    //   $.ajax({
+    //     url: apiurl,
+    //     method: "GET",
+    //     // dataType: "text",
+    //     data: {
+    //       column_index: "4",
+    //       start_date: "2017-01-01",
+    //       api_key: apikey
+    //     },
+    //     success: parseResult
+    //   })
+    // };
+    generateInfo(apiurl2);
+    generateChart(apiurl1);
+    $quote.select();
   });
 
   $("#test").on("click", function (e) {
@@ -82,6 +99,7 @@ $(document).ready(function () {
     var startDate = formatTime(generateStartDate($testTimeframe));
     var apiurl = "https://www.quandl.com/api/v3/datasets/WIKI/" + $stock.val() + ".csv?start_date=" + startDate + "&api_key=" + apikey
     generateTestResult(apiurl);
+    $stock.select();
   });
 
   $("#buyIndicator").on("change", function () {
@@ -121,6 +139,32 @@ $(document).ready(function () {
     } else if (el === "5 years") {
       return today.setFullYear(today.getFullYear()-5);
     }
+  };
+
+  var generateInfo = function (apiurl) {
+
+    $(".showInfo").html("");
+
+    d3.json(apiurl, function(data) {
+      // debugger
+      var $showInfo = $(".showInfo")
+      $showInfo.css("marginTop", "50px")
+      var pattern = /.*\(.*\)/
+      var name = data.dataset.name
+      var date = data.dataset.end_date
+      var volume = (parseInt(data.dataset.data[0][5])/1000000).toFixed(2) + "M"
+      var open = data.dataset.data[0][1].toFixed(2)
+      var close = data.dataset.data[0][4].toFixed(2)
+      var dayLow = data.dataset.data[0][3].toFixed(2)
+      var dayHigh = data.dataset.data[0][2].toFixed(2)
+      var yearLow = _.min(data.dataset.data, function(el){return el[3]})[3].toFixed(2)
+      var yearHigh = _.max(data.dataset.data, function(el){return el[2]})[2].toFixed(2)
+
+      $showInfo.append("<table class='bordered centered striped'><thead><tr><th>Name</th><th>Date</th><th>Volume</th><th>Open</th><th>Close</th><th>Day Low</th><th>Day High</th><th>52-week Low</th><th>52-week High</th></tr></thead><tbody class='info'></tbody></table>")
+
+      $(".info").append("<tr><td>" + pattern.exec(name) + "</td><label>Name</label><td>" + date + "</td><td>" + volume + "</td><td>" + open + "</td><td>" + close + "</td><td>" + dayLow + "</td><td>" + dayHigh + "</td><td>" + yearLow + "</td><td>" + yearHigh + "</td></tr>")
+
+    })
   };
 
   var generateChart = function (apiurl) {
@@ -282,7 +326,9 @@ $(document).ready(function () {
         .text($quote.val().toUpperCase() + " - " + currentPrice + " USD")
 
       $('.price').css("fontWeight", "bold")
-      $quote.val("")
+
+      // $quote.val("");
+
 
       svg.append('text')
         .attr("x", 5)
@@ -416,13 +462,13 @@ $(document).ready(function () {
         // return
       } else {
         // debugger
-        $testResult.append("<table class='bordered centered highlight'><thead><tr><th>Action</th><th>Date</th><th>Indicator</th><th>Indicator Value</th><th>Stock</th><th>No. Of Shares</th><th>Price</th><th>Total</th></tr></thead><tbody></tbody></table>")
+        $testResult.append("<table class='bordered centered highlight'><thead><tr><th>Action</th><th>Date</th><th>Indicator</th><th>Indicator Value</th><th>Stock</th><th>No. Of Shares</th><th>Price</th><th>Total</th></tr></thead><tbody class='resultTable'></tbody></table>")
         for (var i = 0; i < buyData.length; i++) {
           buyDate = buyData[i][0]
           buyPrice = buyData[i][1]
           buyIndVal = buyData[i][2]
 
-          $("tbody").append("<tr><td>BUY</td><td>" + formatTime(buyDate) + "</td><td>" + $buyIndicator.val() + "</td><td>" + buyIndVal.toFixed(2) + "</td><td>" + $stock.val().toUpperCase() + "</td><td>" + buyNumOfShares + "</td><td>" + buyPrice.toFixed(2) + "</td><td>" + (buyPrice * buyNumOfShares).toFixed(2) + "</td></tr>")
+          $(".resultTable").append("<tr><td>BUY</td><td>" + formatTime(buyDate) + "</td><td>" + $buyIndicator.val() + "</td><td>" + buyIndVal.toFixed(2) + "</td><td>" + $stock.val().toUpperCase() + "</td><td>" + buyNumOfShares + "</td><td>" + buyPrice.toFixed(2) + "</td><td>" + (buyPrice * buyNumOfShares).toFixed(2) + "</td></tr>")
 
           buyTotal += buyPrice * buyNumOfShares
           sharesHolding += parseInt(buyNumOfShares)
@@ -435,7 +481,7 @@ $(document).ready(function () {
             sellPrice = sellData[i][1]
             sellIndVal = sellData[i][2]
 
-            $("tbody").append("<tr><td>SELL</td><td>" + formatTime(sellDate) + "</td><td>" + $sellIndicator.val() + "</td><td>" + sellIndVal.toFixed(2) + "</td><td>" + $stock.val().toUpperCase() + "</td><td>" + sellNumOfShares + "</td><td>" + sellPrice.toFixed(2) + "</td><td>" + (sellPrice * sellNumOfShares).toFixed(2) + "</td></tr>")
+            $(".resultTable").append("<tr><td>SELL</td><td>" + formatTime(sellDate) + "</td><td>" + $sellIndicator.val() + "</td><td>" + sellIndVal.toFixed(2) + "</td><td>" + $stock.val().toUpperCase() + "</td><td>" + sellNumOfShares + "</td><td>" + sellPrice.toFixed(2) + "</td><td>" + (sellPrice * sellNumOfShares).toFixed(2) + "</td></tr>")
 
             sellTotal += sellPrice * sellNumOfShares
             sharesHolding -= parseInt(sellNumOfShares)
@@ -446,11 +492,11 @@ $(document).ready(function () {
         dateCurrent = data[data.length-1].date;
         netPosition = (parseFloat(result) + (sharesHolding * priceCurrent)).toFixed(2)
 
-        $("tbody").append("<tr><th>OUTCOME</th><th>" + formatTime(dateCurrent) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='result'>" + result + "</th></tr>")
+        $(".resultTable").append("<tr><th>OUTCOME</th><th>" + formatTime(dateCurrent) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='result'>" + result + "</th></tr>")
 
-        $("tbody").append("<tr><th>HOLDING</th><th>" + formatTime(dateCurrent) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + $stock.val().toUpperCase() + "</th><th>" + sharesHolding + "</th><th>" + priceCurrent + "</th><th>" + (sharesHolding * priceCurrent).toFixed(2) + "</th></tr>")
+        $(".resultTable").append("<tr><th>HOLDING</th><th>" + formatTime(dateCurrent) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + $stock.val().toUpperCase() + "</th><th>" + sharesHolding + "</th><th>" + priceCurrent + "</th><th>" + (sharesHolding * priceCurrent).toFixed(2) + "</th></tr>")
 
-        $("tbody").append("<tr><th>NET POS</th><th>" + formatTime(dateCurrent) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='netPos'>" + netPosition + "</th></tr>")
+        $(".resultTable").append("<tr><th>NET POS</th><th>" + formatTime(dateCurrent) + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th>" + "" + "</th><th class='netPos'>" + netPosition + "</th></tr>")
 
         if (parseFloat(result) >= 0) {
           $('.result').css("color", "green");
