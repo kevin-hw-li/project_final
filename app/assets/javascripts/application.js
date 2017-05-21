@@ -167,6 +167,7 @@ $(document).ready(function () {
     })
   };
 
+
   var generateChart = function (apiurl) {
 
     if ($quote.val() === "") {
@@ -175,9 +176,9 @@ $(document).ready(function () {
 
     $("svg").remove();
 
-    var margin = {top: 20, right: 50, bottom: 30, left: 50},
-        width = 1025 - margin.left - margin.right,
-        height = 550 - margin.top - margin.bottom;
+    var margin = {top: 20, right: 50, bottom: 30, left: 100},
+        width = 900 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
 
     var x = techan.scale.financetime()
       .range([0, width]);
@@ -357,6 +358,7 @@ $(document).ready(function () {
           timeAnnotation.format()(coords.x) + ", " + ohlcAnnotation.format()(coords.y)
       )
     }
+
   };
 
   var generateTestResult = function (apiurl) {
