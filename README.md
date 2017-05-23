@@ -1,6 +1,9 @@
 # StockBT
 
 This is an app which allows people to check U.S. stock quotes, and allows logged in users to back test their trading strategies.
+
+[ATTENTION! U.S. stock quotes only!]
+
 [Access](https://stockbt.herokuapp.com/)
 
 ### LANGUAGES USED
@@ -16,6 +19,6 @@ Javascript (jQuery, AJAX, d3), API (Quandl), HTML, CSS (Materialize), Ruby on ra
 
 - Stock quotes in minutes or hours interval
 - Stock quotes outside of U.S.
-- Indices 
+- Indices
 
 ##### Kevin Li
